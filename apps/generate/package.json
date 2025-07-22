@@ -1,7 +1,9 @@
 {
-  "name": "@sveltekite/generator",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@sveltekite/generate",
+  "version": "0.0.2",
+  "publishConfig": {
+     "access": "public"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {

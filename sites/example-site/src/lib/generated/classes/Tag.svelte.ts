@@ -1,15 +1,15 @@
 import type { TagSchema } from '../schema.js'
-import { BaseDB } from '@sveltekite/sveltekite'
-import { withProps, withSave, withData, withInstance } from '@sveltekite/sveltekite'
-import { DataSave } from '@sveltekite/sveltekite'
+import { BaseDB } from 'sveltekite'
+import { withProps, withSave, withData, withInstance } from 'sveltekite'
+import { DataSave } from 'sveltekite'
 import TagDetail from '../components/tag/TagDetail.svelte'
 import TagListItem from '../components/tag/TagListItem.svelte'
 
 export class Tag extends BaseDB {
    public data = $state<TagSchema>({
       id: crypto.randomUUID(),
-      name: 'new tag',
-      color: ''
+      name: 'new tag name',
+      color: 'new tag color'
    })
 
    constructor(data?: TagSchema) {

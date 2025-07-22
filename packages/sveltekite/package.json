@@ -1,5 +1,5 @@
 {
-	"name": "@sveltekite/sveltekite",
+	"name": "sveltekite",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",

@@ -5,13 +5,13 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm -r run dev",
-    "dev:generator": "pnpm -F @sveltekite/generator run dev",
+    "dev:sveltekite": "pnpm -F @sveltekite/sveltekite run dev",
+    "dev:generate": "pnpm -F @sveltekite/generate run dev",
     "dev:example": "pnpm -F @sveltekite/example-site run dev",
-    "dev:package": "pnpm -F @sveltekite/sveltekite run dev",
     "build": "pnpm -r run build",
-    "build:generator": "pnpm -F @sveltekite/generator run build",
+    "build:sveltekite": "pnpm -F @sveltekite/sveltekite run build",
+    "build:generate": "pnpm -F @sveltekite/generate run build",
     "build:example": "pnpm -F @sveltekite/example-site run build",
-    "build:package": "pnpm -F @sveltekite/sveltekite run build",
     "clean": "find ./ -name node_modules -type d -exec rm -rf {} +"
   },
   "keywords": [

@@ -1,15 +1,15 @@
 import type { UserSchema } from '../schema.js'
-import { BaseDB } from '@sveltekite/sveltekite'
-import { withProps, withSave, withData, withInstance } from '@sveltekite/sveltekite'
-import { DataSave } from '@sveltekite/sveltekite'
+import { BaseDB } from 'sveltekite'
+import { withProps, withSave, withData, withInstance } from 'sveltekite'
+import { DataSave } from 'sveltekite'
 import UserDetail from '../components/user/UserDetail.svelte'
 import UserListItem from '../components/user/UserListItem.svelte'
 
 export class User extends BaseDB {
    public data = $state<UserSchema>({
       id: crypto.randomUUID(),
-      name: 'new user',
-      email: ''
+      name: 'new user name',
+      email: 'new user email'
    })
 
    constructor(data?: UserSchema) {

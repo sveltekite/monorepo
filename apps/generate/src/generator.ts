@@ -41,6 +41,7 @@ export class CodeGenerator {
     if (this.options.generateRoutes !== false) {
       await this.generateGenericRoutes()
       await this.generateLayoutFile()
+      await this.generateLayoutSvelte()
     }
 
     console.log('✅ Generated all files successfully!')
@@ -50,6 +51,7 @@ export class CodeGenerator {
     console.log('   ✅ Default Svelte components')
     if (this.options.generateRoutes !== false) {
       console.log('   ✅ Generic CRUD routes')
+      console.log('   ✅ Navigation layout')
     }
   }
 
@@ -172,7 +174,7 @@ export * from './tables.js'
   async generateDbFile(): Promise<void> {
     const dbName = this.options.dbName || 'app-db'
     const content = `// GENERATED FILE - DO NOT EDIT
-import { DexieAdapter } from '@sveltekite/sveltekite'
+import { DexieAdapter } from 'sveltekite'
 import { storesConfig } from './tables.js'
 
 export const db = new DexieAdapter('${dbName}', storesConfig)
@@ -228,9 +230,9 @@ export const db = new DexieAdapter('${dbName}', storesConfig)
 
     // Generate imports
     const schemaImports = `import type { ${allSchemas.join(', ')} } from '../schema.js'`
-    const baseImport = `import { BaseDB } from '@sveltekite/sveltekite'`
-    const withImports = `import { withProps, withSave, withData, withInstance } from '@sveltekite/sveltekite'`
-    const dataSaveImport = `import { DataSave } from '@sveltekite/sveltekite'`
+    const baseImport = `import { BaseDB } from 'sveltekite'`
+    const withImports = `import { withProps, withSave, withData, withInstance } from 'sveltekite'`
+    const dataSaveImport = `import { DataSave } from 'sveltekite'`
 
     // Generate component imports
     const componentImports = this.generateComponentImports(entityName, config)
@@ -391,7 +393,7 @@ ${componentGetters}
         // Display component for the related entity
         const relationDisplayName = relationName.replace(/Id$/, '')
         getters.push(`   get ${relationDisplayName}() {
-      return withInstance(${targetClass}ListItem, '${targetEntity}', () => this.db.get('${targetEntity}')(this.data.${relation.foreignKey})) as any
+      return withInstance(${targetClass}ListItem, '${targetEntity}', () => this.db.get('${targetEntity}')(this.data.${relation.foreignKey}), ${targetClass}) as any
    }`)
       } else if (relation.type === 'manyToMany') {
         const targetEntity = relation.target
@@ -703,7 +705,7 @@ export const load: PageLoad = async ({ params }) => {
   }
 
   private async generateLayoutFile(): Promise<void> {
-    const content = `import { setDB } from '@sveltekite/sveltekite'
+    const content = `import { setDB } from 'sveltekite'
 import { db } from '$lib/generated/db.js'
 
 setDB(db)
@@ -713,6 +715,32 @@ export const ssr = false
 
     await fs.writeFile(
       path.join(this.projectPath, 'src/routes/+layout.ts'),
+      content
+    )
+  }
+
+  private async generateLayoutSvelte(): Promise<void> {
+    const content = `<script lang="ts">
+   import { db } from '$lib/generated/db.js'
+</script>
+
+{#if db}
+<nav>
+   <ul>
+      <li><a href="/">Home</a></li>
+      {#each db.tables.filter(t => !t.name.includes('_')) as { name }}
+         <li><a href={\`/\${name}\`}>{name}</a></li>
+      {/each}
+   </ul>
+</nav>
+<slot />
+{:else}
+   No Database Configured
+{/if}
+`
+
+    await fs.writeFile(
+      path.join(this.projectPath, 'src/routes/+layout.svelte'),
       content
     )
   }

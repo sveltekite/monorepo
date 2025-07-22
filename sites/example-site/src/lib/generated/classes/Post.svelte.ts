@@ -1,7 +1,7 @@
 import type { PostSchema, TagSchema } from '../schema.js'
-import { BaseDB } from '@sveltekite/sveltekite'
-import { withProps, withSave, withData, withInstance } from '@sveltekite/sveltekite'
-import { DataSave } from '@sveltekite/sveltekite'
+import { BaseDB } from 'sveltekite'
+import { withProps, withSave, withData, withInstance } from 'sveltekite'
+import { DataSave } from 'sveltekite'
 import PostDetail from '../components/post/PostDetail.svelte'
 import PostListItem from '../components/post/PostListItem.svelte'
 import UserSelect from '../components/user/UserSelect.svelte'
@@ -12,8 +12,8 @@ import TagList from '../components/tag/TagList.svelte'
 export class Post extends BaseDB {
    public data = $state<PostSchema>({
       id: crypto.randomUUID(),
-      title: 'new post',
-      content: '',
+      title: 'new post title',
+      content: 'new post content',
       userId: ''
    })
 
@@ -61,7 +61,7 @@ export class Post extends BaseDB {
    }
 
    get user() {
-      return withInstance(UserListItem, 'user', () => this.db.get('user')(this.data.userId), Post) as any
+      return withInstance(UserListItem, 'user', () => this.db.get('user')(this.data.userId), User) as any
    }
 
    get tags() {

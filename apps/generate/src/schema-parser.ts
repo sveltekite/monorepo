@@ -203,8 +203,12 @@ export type ${this.capitalize(entityName)}Schema = z.infer<typeof ${entityName}S
     }
   }
 
-  static generateDefaultData(_: string, config: EntityConfig): string {
+  static generateDefaultData(entityName: string, config: EntityConfig): string {
     const defaults = Object.entries(config.fields).map(([fieldName, fieldConfig]) => {
+      // Generate dynamic default values for string/text fields
+      if ((fieldConfig.type === 'string' || fieldConfig.type === 'text') && fieldName !== 'id') {
+        return `      ${fieldName}: 'new ${entityName} ${fieldName}'`
+      }
       return `      ${fieldName}: ${fieldConfig.default || "''"}`
     }).join(',\n')
 

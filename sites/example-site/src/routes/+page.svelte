@@ -31,8 +31,8 @@ This will generate all the necessary files and you can then explore the generate
    <h2>🚀 Developer Workflow</h2>
    <ol>
       <li>✅ Create SvelteKit project</li>
-      <li>✅ Install <code>@sveltekite/sveltekite</code> as dependency</li>
-      <li>✅ Install <code>@sveltekite/generator</code> as dev dependency</li>
+      <li>✅ Install <code>sveltekite</code> as dependency</li>
+      <li>✅ Install <code>@sveltekite/generate</code> as dev dependency</li>
       <li>✅ Create <code>schema.yaml</code> file</li>
       <li>🔄 Run generator: <button onclick={showInstructions}>npm run generate</button></li>
       <li>🎯 Start development: <code>npm run dev</code></li>
