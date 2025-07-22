@@ -1,58 +1,80 @@
-# Svelte library
+# SvelteKite
 
-Everything you need to build a Svelte library, powered by [`sv`](https://npmjs.com/package/sv).
+SvelteKite is a tool for generating a SvelteKit app from a YAML schema.
 
-Read more about creating a library [in the docs](https://svelte.dev/docs/kit/packaging).
+It uses an architecture called "instance-driven architecture" that centralizes database queries in class wrappers for each table, and provides component getters which pass the relevant db queries in using helper functions. This results in super clean components that contain no database saving or loading logic, and you can reuse the same component in multiple places depending on context.
 
-## Creating a project
 
-If you're seeing this, you've probably already done this step. Congrats!
+It also uses database adapters through a standardized interface so you can swap out your own database.
 
-```bash
-# create a new project in the current directory
-npx sv create
+More thorough documentation coming soon!
 
-# create a new project in my-app
-npx sv create my-app
-```
+Note: currently Dexie and Zod are hard dependencies.
 
-## Developing
+## How to Use
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+1. **Initialize SvelteKit project**
+   ```bash
+   npx sv create your-project-name
+   ```
 
-```bash
-npm run dev
+2. **Install SvelteKite** (and Dexie and Zod, currently)
+   ```bash
+   npm install sveltekite dexie zod
+   npm install --save-dev @sveltekite/generate
+   ```
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+3. **Create schema.yaml** (in your project root directory)
+   ```yaml
+   # this is just an example
+   # I would only use string, number, and your entity names for now
+   user:
+     name: string
+     email: string
 
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
+   post:
+     title: string
+     content: string
+     user: user # this will put a userId field onto post
+     tags: [tag] # this will create a join table. many-to-many relations MUST have a plural name
 
-## Building
+   tag:
+     name: string
+     color: string
+   ```
 
-To build your library:
+4. **Generate code** (from your project's root directory)
+   ```bash
+   npx @sveltekite/generate schema.yaml
+   ```
 
-```bash
-npm run package
-```
+5. **Start development**
+   ```bash
+   npm run dev
+   ```
 
-To create a production version of your showcase app:
+## What Gets Generated
 
-```bash
-npm run build
-```
+- `src/lib/generated/classes/` - Reactive entity classes
+- `src/lib/generated/schema.ts` - Zod type definitions
+- `src/lib/generated/tables.ts` - Database table configurations
+- `src/lib/generated/data.ts` - constructors object with entity class constructors
+- `src/lib/generated/db.ts` - Database instance (in future you could swap this out for different databases)
+- `src/routes/[table]/[id]` - Generic CRUD routes with `+page.ts` and `+page.svelte` files
+- `src/routes/+layout.ts` - Database setup
 
-You can preview the production build with `npm run preview`.
+## Next Steps
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+In Chrome dev tools, go to Application/Storage/IndexedDB to see your database.
 
-## Publishing
+You can rename the database in `$lib/generated/db.ts`. It should be `app-db` initially.
 
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
+Once the app is generated, you can remove `@sveltekite/generate` as a dependency.
 
-To publish your library to [npm](https://www.npmjs.com):
+You will still need `sveltekite`. It's only a SvelteKit library so it shouldn't have any dependencies you're not using anyway.
 
-```bash
-npm publish
-```
+From here, it's up to you if you want to adhere to the instance-driven architecture or just write the app your own way.
+
+I will write some more thorough documentation for the architecture very soon. It's very new and experimental and I most definitely have not sorted out all the issues. One big thing to mention:
+
+- props passed through the component getters have more strict requirements for reactivity, i.e. values need to be wrapped and you should use state runes on class fields. Basically anything you declare with let probably won't be reactive. My rule of thumb is I pass the instance through the getters and then pass callbacks as extra props, which you can see in the *Detail components.
