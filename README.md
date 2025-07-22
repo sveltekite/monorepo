@@ -18,13 +18,28 @@ Note: currently Dexie and Zod are hard dependencies.
    npx sv create your-project-name
    ```
 
-2. **Install SvelteKite** (and Dexie and Zod, currently)
+2. **Enable Experimental Async**
+
+   In your **svelte.config.ts** file, add the following:
+
+   ```ts
+   const config = {
+      compilerOptions: {
+         experimental: {
+            async: true
+         }
+      },
+      // ...rest of config
+   }
+   ````
+
+3. **Install SvelteKite** (and Dexie and Zod, currently)
    ```bash
    npm install sveltekite dexie zod
    npm install --save-dev @sveltekite/generate
    ```
 
-3. **Create schema.yaml** (in your project root directory)
+4. **Create schema.yaml** (in your project root directory)
    ```yaml
    # this is just an example
    # I would only use string, number, and your entity names for now
@@ -43,12 +58,12 @@ Note: currently Dexie and Zod are hard dependencies.
      color: string
    ```
 
-4. **Generate code** (from your project's root directory)
+5. **Generate code** (from your project's root directory)
    ```bash
    npx @sveltekite/generate schema.yaml
    ```
 
-5. **Start development**
+6. **Start development**
    ```bash
    npm run dev
    ```

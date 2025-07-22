@@ -9,13 +9,28 @@ This site demonstrates the intended SvelteKite developer experience.
    npx sv create your-project-name
    ```
 
-2. **Install SvelteKite**
+2. **Enable Experimental Async**
+
+   In your **svelte.config.ts** file, add the following:
+
+   ```ts
+   const config = {
+      compilerOptions: {
+         experimental: {
+            async: true
+         }
+      },
+      // ...rest of config
+   }
+   ````
+
+3. **Install SvelteKite**
    ```bash
    npm install sveltekite dexie zod
    npm install -D @sveltekite/generate
    ```
 
-3. **Create schema.yaml** (in your project root directory)
+4. **Create schema.yaml** (in your project root directory)
    ```yaml
    # this is just an example
    # I would only use string, number, and your entity names for now
@@ -34,12 +49,12 @@ This site demonstrates the intended SvelteKite developer experience.
      color: string
    ```
 
-4. **Generate code** (from your project's root directory)
+5. **Generate code** (from your project's root directory)
    ```bash
    npx @sveltekite/generate schema.yaml
    ```
 
-5. **Start development**
+6. **Start development**
    ```bash
    npm run dev
    ```
