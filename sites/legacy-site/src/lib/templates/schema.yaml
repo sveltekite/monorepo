@@ -1,0 +1,12 @@
+article:
+  title: string
+  body: text
+  user: user
+  tags: [tag]
+
+tag:
+  name: string
+  color: string
+
+user:
+  name: string

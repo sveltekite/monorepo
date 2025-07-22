@@ -1,0 +1,13 @@
+user:
+  name: string
+  email: email
+
+post:
+  title: string
+  content: text
+  user: user
+  tags: [tag]
+
+tag:
+  name: string
+  color: string

@@ -1,0 +1,38 @@
+body {
+   background-color: hsl(240, 10%, 5%);
+   color: white;
+   font-family: sans-serif;
+   padding: 1em;
+   display: grid;
+   place-items: center;
+}
+
+a {
+   color: lightgreen;
+   text-decoration: none;
+}
+
+div.boundary {
+   display: contents;
+}
+
+ul {
+   padding-inline-start: 0;
+}
+
+li {
+   list-style: none;
+}
+
+nav ul {
+   display: flex;
+   gap: 2em;
+}
+
+input, textarea {
+   background-color: hsl(240, 10%, 30%);
+   border: none;
+   color: white;
+   padding: 0.5em;
+   margin-block: 1em;
+}
