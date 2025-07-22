@@ -2,43 +2,41 @@
 
 This site demonstrates the intended SvelteKite developer experience.
 
-## Developer Workflow
+## How to Use
 
 1. **Initialize SvelteKit project**
    ```bash
-   npm create svelte@latest my-app
-   cd my-app
-   npm install
+   npx sv create your-project-name
    ```
 
 2. **Install SvelteKite**
    ```bash
-   npm install @sveltekite/sveltekite zod
-   npm install -D @sveltekite/generator
+   npm install sveltekite dexie zod
+   npm install -D @sveltekite/generate
    ```
 
-3. **Create schema.yaml**
+3. **Create schema.yaml** (in your project root directory)
    ```yaml
+   # this is just an example
+   # I would only use string, number, and your entity names for now
    user:
      name: string
-     email: email
+     email: string
 
    post:
      title: string
-     content: text
-     user: user
-     tags: [tag]
+     content: string # in theory this would be a longer string, but I think they're the same
+     user: user # this will put a userId field onto post
+     tags: [tag] # many-to-many MUST have a plural name
 
    tag:
      name: string
      color: string
    ```
 
-4. **Generate code**
+4. **Generate code** (from your project's root directory)
    ```bash
-   npm run generate
-   # or
-   npx sveltekite-generate schema.yaml
+   npx @sveltekite/generate schema.yaml
    ```
 
 5. **Start development**
@@ -48,10 +46,11 @@ This site demonstrates the intended SvelteKite developer experience.
 
 ## What Gets Generated
 
-- `src/lib/generated/schema.ts` - Zod type definitions
-- `src/lib/generated/tables.ts` - Database table configurations  
-- `src/lib/generated/db.ts` - Database instance
 - `src/lib/generated/classes/` - Reactive entity classes
+- `src/lib/generated/schema.ts` - Zod type definitions
+- `src/lib/generated/tables.ts` - Database table configurations
+- `src/lib/generated/data.ts` - constructors object with entity class constructors
+- `src/lib/generated/db.ts` - Database instance (in future you could swap this out for different databases)
 - `src/routes/[table]/` - Generic CRUD routes
 - `src/routes/+layout.ts` - Database setup
 

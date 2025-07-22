@@ -14,10 +14,7 @@
    function showInstructions() {
       alert(`To generate code from the schema.yaml file, run:
 
-npm run generate
-
-Or directly:
-npx sveltekite-generate schema.yaml
+npx @sveltekite/generate schema.yaml
 
 This will generate all the necessary files and you can then explore the generated routes.`)
    }
