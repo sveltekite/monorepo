@@ -78,3 +78,7 @@ From here, it's up to you if you want to adhere to the instance-driven architect
 I will write some more thorough documentation for the architecture very soon. It's very new and experimental and I most definitely have not sorted out all the issues. One big thing to mention:
 
 - props passed through the component getters have more strict requirements for reactivity, i.e. values need to be wrapped and you should use state runes on class fields. Basically anything you declare with let probably won't be reactive. My rule of thumb is I pass the instance through the getters and then pass callbacks as extra props, which you can see in the *Detail components.
+
+## Known Issues
+
+- currently the generator is not writing the import statement for a class constructor that is passed into the withInstance function. This isn't really noticeable at the moment since the app isn't using that particular getter.
