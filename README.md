@@ -65,6 +65,10 @@ Note: currently Dexie and Zod are hard dependencies.
 
 ## Next Steps
 
+In Chrome dev tools, go to Application/Storage/IndexedDB to see your database.
+
+You can rename the database in `$lib/generated/db.ts`. It should be `app-db` initially.
+
 Once the app is generated, you can remove `@sveltekite/generate` as a dependency.
 
 You will still need `sveltekite`. It's only a SvelteKit library so it shouldn't have any dependencies you're not using anyway.
