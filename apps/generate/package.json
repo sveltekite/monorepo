@@ -1,6 +1,6 @@
 {
-  "name": "@sveltekite/generate",
-  "version": "0.0.2",
+  "name": "@sveltekite/generate-legacy",
+  "version": "0.0.3",
   "publishConfig": {
      "access": "public"
   },

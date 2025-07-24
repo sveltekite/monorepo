@@ -1,0 +1,18 @@
+# Example schema for testing the new generator
+user:
+  name: string
+  email: string
+
+post:
+  title: string
+  content: text
+  user: user  # belongsTo relationship
+  tags: [tag]  # manyToMany relationship
+
+tag:
+  name: string
+  color: color
+
+category:
+  name: string
+  posts: [post]  # manyToMany relationship

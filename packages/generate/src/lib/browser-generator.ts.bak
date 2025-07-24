@@ -1,0 +1,205 @@
+// Browser-compatible version of the code generator (no file I/O)
+
+import type { DatabaseSchema, CodeArtifact } from './ast/index.js';
+import { ASTBuilder } from './builders/ast-builder.js';
+import { EntityClassVisitor } from './visitors/entity-class-visitor.js';
+
+export interface BrowserGeneratorOptions {
+  dbName?: string;
+  generateRoutes?: boolean;
+}
+
+export class BrowserCodeGenerator {
+  private schema: DatabaseSchema;
+  private options: BrowserGeneratorOptions;
+
+  constructor(schema: DatabaseSchema, options: BrowserGeneratorOptions = {}) {
+    this.schema = schema;
+    this.options = {
+      dbName: 'app-db',
+      generateRoutes: true,
+      ...options
+    };
+  }
+
+  /**
+   * Preview what would be generated without writing files
+   */
+  async preview(): Promise<CodeArtifact[]> {
+    console.log('🚀 Building AST and generating preview...');
+    
+    // Use browser-compatible visitor (no file I/O)
+    const visitor = new BrowserEntityClassVisitor();
+    const artifacts = await visitor.visitDatabaseSchema(this.schema);
+    
+    console.log('✅ Preview generated!');
+    console.log(`📁 Would generate ${artifacts.length} files`);
+    
+    return artifacts;
+  }
+
+  /**
+   * Create a generator from YAML string
+   */
+  static fromYamlString(yamlContent: string, options?: BrowserGeneratorOptions): BrowserCodeGenerator {
+    const schema = ASTBuilder.buildDatabaseSchema(yamlContent);
+    return new BrowserCodeGenerator(schema, options);
+  }
+
+  /**
+   * Get the parsed schema
+   */
+  getSchema(): DatabaseSchema {
+    return this.schema;
+  }
+}
+
+// Browser-compatible visitor that doesn't read template files
+class BrowserEntityClassVisitor {
+  async visitDatabaseSchema(schema: DatabaseSchema): Promise<CodeArtifact[]> {
+    const artifacts: CodeArtifact[] = [];
+    
+    for (const entity of schema.entities) {
+      const artifact = await this.visitEntity(entity);
+      artifacts.push(artifact);
+    }
+    
+    return artifacts;
+  }
+
+  async visitEntity(entity: EntityNode): Promise<CodeArtifact> {
+    // Use inline template instead of reading from file
+    const templateContent = this.getEntityClassTemplate();
+    
+    const context = this.buildContext(entity);
+    const generatedContent = this.renderTemplate(templateContent, context);
+    
+    const targetPath = `src/lib/generated/classes/${this.capitalize(entity.name)}.svelte.ts`;
+    
+    return {
+      type: 'CodeArtifact',
+      artifactType: 'entityClass',
+      targetPath,
+      dependencies: this.getDependencies(entity),
+      content: [{
+        type: 'Code',
+        language: 'typescript',
+        content: {
+          type: 'Literal',
+          content: generatedContent
+        }
+      }]
+    };
+  }
+
+  private getEntityClassTemplate(): string {
+    return `__IMPORTS__
+
+export class __CLASS_NAME__ extends BaseDB {
+   public data = $state<__SCHEMA_TYPE__>(__DEFAULT_DATA__)
+__RELATION_STATE_FIELDS__
+
+   constructor(data?: __SCHEMA_TYPE__) {
+      super()
+      if (data) this.data = data
+__CONSTRUCTOR_CALLS__
+   }
+
+__RELATION_METHODS__
+
+__COMPONENT_GETTERS__
+
+   get snapshot() {
+      return $state.snapshot(this.data)
+   }
+
+   get db() {
+      return this.getDB()
+   }
+
+   static create() {
+      const __ENTITY_NAME__ = new __CLASS_NAME__()
+      return __ENTITY_NAME__.db.put('__ENTITY_NAME__')(__ENTITY_NAME__.snapshot)
+   }
+}`;
+  }
+
+  private renderTemplate(template: string, context: Record<string, any>): string {
+    let result = template;
+    for (const [key, value] of Object.entries(context)) {
+      const regex = new RegExp(`__${key.toUpperCase()}__`, 'g');
+      result = result.replace(regex, String(value));
+    }
+    return result;
+  }
+
+  private buildContext(entity: EntityNode): Record<string, any> {
+    const className = this.capitalize(entity.name);
+    const entityName = entity.name;
+    const schemaType = `${className}Schema`;
+    
+    return {
+      imports: this.buildImports(entity),
+      class_name: className,
+      entity_name: entityName,
+      schema_type: schemaType,
+      default_data: this.buildDefaultData(entity),
+      relation_state_fields: '',
+      constructor_calls: '',
+      relation_methods: '',
+      component_getters: this.buildComponentGetters(entity)
+    };
+  }
+
+  private buildImports(entity: EntityNode): string {
+    const className = this.capitalize(entity.name);
+    
+    return `import type { ${className}Schema } from '../schema.js'
+import { BaseDB } from 'sveltekite'
+import { withProps, withSave, withData, withInstance } from 'sveltekite'
+import { DataSave } from 'sveltekite'
+import ${className}Detail from '../components/${entity.name.toLowerCase()}/${className}Detail.svelte'
+import ${className}ListItem from '../components/${entity.name.toLowerCase()}/${className}ListItem.svelte'`;
+  }
+
+  private buildDefaultData(entity: EntityNode): string {
+    const fields = entity.fields.map(field => {
+      if ((field.dataType.kind === 'primitive' && 
+           (field.dataType.name === 'string' || field.dataType.name === 'text')) && 
+          field.name !== 'id') {
+        return `      ${field.name}: 'new ${entity.name} ${field.name}'`;
+      }
+      return `      ${field.name}: ${field.defaultValue || "''"}`;
+    });
+    
+    return `{\n${fields.join(',\n')}\n   }`;
+  }
+
+  private buildComponentGetters(entity: EntityNode): string {
+    const className = this.capitalize(entity.name);
+    const entityName = entity.name;
+    
+    return `   get detail() {
+      return withSave(DataSave, ${className}Detail, { ${entityName}: this }, () => this.db.put('${entityName}')(this.snapshot))
+   }
+
+   get listItem() {
+      return withProps(${className}ListItem, { ${entityName}: this })
+   }`;
+  }
+
+  private getDependencies(entity: EntityNode): string[] {
+    return ['sveltekite'];
+  }
+
+  private capitalize(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+}
+
+// Re-export browser-compatible types
+export type { DatabaseSchema, CodeArtifact, EntityNode } from './ast/index.js';
+export { ASTBuilder } from './builders/ast-builder.js';
+
+// Import necessary types
+import type { EntityNode } from './ast/index.js';
