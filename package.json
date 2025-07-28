@@ -5,17 +5,19 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm -r run dev",
-    "dev:sveltekite": "pnpm -F @sveltekite/sveltekite run dev",
+    "dev:sk": "pnpm -F @sveltekite/sveltekite run dev",
+    "dev:super": "pnpm -F @sveltekite/super run dev",
     "dev:generate": "pnpm -F @sveltekite/generate run dev",
     "dev:example": "pnpm -F @sveltekite/example-site run dev",
     "build": "pnpm -r run build",
-    "build:sveltekite": "pnpm -F @sveltekite/sveltekite run build",
+    "build:sk": "pnpm -F @sveltekite/sveltekite run build",
+    "build:super": "pnpm -F @sveltekite/sveltekite run build",
     "build:generate": "pnpm -F @sveltekite/generate run build",
     "build:example": "pnpm -F @sveltekite/example-site run build",
     "clean": "find ./ -name node_modules -type d -exec rm -rf {} +"
   },
   "keywords": [
-    
+
   ],
   "author": "",
   "license": "ISC",
