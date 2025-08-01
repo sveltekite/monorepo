@@ -1,58 +1,14 @@
-# Svelte library
+# Super Components
 
-Everything you need to build a Svelte library, powered by [`sv`](https://npmjs.com/package/sv).
+## A pattern for tidy, scalable Svelte apps.
 
-Read more about creating a library [in the docs](https://svelte.dev/docs/kit/packaging).
+Super Components provide a predictable and systemised way to organise data loading, and have been designed to work with Svelte's new remote functions [(as of SvelteKit 2.27)](https://svelte.dev/docs/kit/remote-functions).
 
-## Creating a project
+Super Components provide the following benefits:
 
-If you're seeing this, you've probably already done this step. Congrats!
+- All data loading queries are centralised and batched at the top level of a component hierarchy
+- Data is passed to sub components via props
+- Errors are automatically handled and passed to dedicated components
+- Components can be reused across multiple contexts, with different data passed to them
 
-```sh
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
-
-## Building
-
-To build your library:
-
-```sh
-npm run package
-```
-
-To create a production version of your showcase app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
-
-## Publishing
-
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
-
-To publish your library to [npm](https://www.npmjs.com):
-
-```sh
-npm publish
-```
+Using Super Components, the majority of your other components can follow the exact same pattern: receive relevant data as props, import a mutation function, and then provide the form or interface required for the mutation.
