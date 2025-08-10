@@ -1,17 +1,16 @@
 <script lang="ts">
    import { SuperComponent } from "$lib/classes/SuperComponent.svelte.js";
-   import Person from "../test-components/Person.svelte";
-   import PersonEdit from "../test-components/PersonEdit.svelte";
+   import Person, { components } from "../test-components/Person.svelte";
 
    import { getPerson } from '../test.remote.js'
 
    let { params } = $props()
 
-   const person = new SuperComponent(Person, {
+   const queries = {
       person: getPerson(params.name)
-   }, {
-      edit: [PersonEdit, [ 'person' ]]
-   })
+   }
+
+   const person = new SuperComponent(Person, queries, components)
 </script>
 
 <person.svelte />

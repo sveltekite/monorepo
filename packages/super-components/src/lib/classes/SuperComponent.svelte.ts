@@ -5,7 +5,7 @@ import { withProps } from "$lib/functions/withProps.js"
 import { withContext } from '$lib/functions/withContext.js'
 import { hash } from '$lib/functions/hash.js'
 
-type GetterMap = {
+export type SubComponentMap = {
    [key:string]: [ Component<any>, string[] ]
 }
 
@@ -14,7 +14,7 @@ export class SuperComponent {
    public queries = $state<Record<string, RemoteQuery<any>>>()
    public hash: string
 
-   constructor(component: Component<any>, queries: Record<string, RemoteQuery<any>>, getterMap: GetterMap) {
+   constructor(component: Component<any>, queries: Record<string, RemoteQuery<any>>, getterMap: SubComponentMap) {
       this.hash = hash(component, queries, getterMap)
       this.queries = queries
       this.component = component
